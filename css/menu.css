@@ -1,0 +1,251 @@
+/* Proceso
+  1.- .menu-wrap position fixed, que envuelve todo el menu, en la
+        esquina superior izq.
+
+  2.- .toggler es el check box. También se posiciona en esq. superior izq.
+        Tamaño 50px. Se hace desaparecer opacity: 0. Aún se puede hacer check
+
+  3.- .menu-wrap .hamburger es el menu en sí.
+       Línea intermedia en .menu-wrap .hamburger>div
+      Líneas superior e inferior con ::before ::after
+
+  4.- .menu-wrap .toggler:checked+.hamburger>div
+        Rota las 3 líneas del menu, 135° al hacer click
+        es decir al hacer checked en el checkbox
+
+  5.- Al hacer click o checked en el checbox también rotan las líneas
+      del menu hamburger para formar una x en:
+        .menu-wrap .toggler:checked+.hamburger>div:before,
+        .menu-wrap .toggler:checked+.hamburger>div:after
+
+  6.- Rota la X en :hover cuando está :checked
+        .menu-wrap .toggler:checked:hover+.hamburger>div
+
+  Inicia Format a Menu ul
+
+  7.- Se coloca div de menu al 100% de la pantalla. Se coloca fixed y centra
+        .menu-wrap .menu
+
+  8.- - Se agrega color de fondo en primer >div.
+      - Tamaño 200% vw y se vuelve a centrar
+      - Comienza con scale(0).
+      - Se agrega transform para escalar
+
+        .menu-wrap .menu>div
+
+  9.- - Segundo div, que contiene el ul no crece más del 90% del viewport
+      - Inicia con opacity:0
+      - Se utiliza transition para que se aparezca menu después de
+        mostrar el background
+          .menu-wrap .menu>div>div
+
+  Nota: Al iniciar, sin estar checked el estado es:
+
+    .menu-wrap .menu (div "container" de menu):
+        .........
+        visibility: hidden;
+        .........
+
+    .menu-wrap .menu>div ("fondo" gris del menu):
+        .........
+        transform: scale(0);
+        .........
+		
+    .menu-wrap .menu>div>div (que contiene al ul):
+        .........
+        opacity: 0;
+        .........
+
+  10.- En el estado checked se colocan los valores finales a todas
+      las clases anteriores. Se hace en las secciones:
+
+      .menu-wrap .toggler:checked~.menu 
+
+      .menu-wrap .toggler:checked~.menu>div 
+
+      .menu-wrap .toggler:checked~.menu>div>div 
+
+  */
+
+
+
+.menu-wrap {
+  /* Nota: Evita scroll al mostrar el menu */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.menu-wrap .toggler {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  opacity: 0;
+}
+
+/* ******************************* */
+/* Inicia format de Hamburger Menu */
+
+
+.menu-wrap .hamburger {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 60px;
+  height: 60px;
+  padding: 1rem;
+  /* background: var(--primary-color); */
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+/* Hamburger center line */
+.menu-wrap .hamburger>div {
+  position: relative;
+  flex: none;
+  width: 100%;
+  height: 2px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Nota: Al momento de hacer click, se convierte en una x */
+  transition: all 0.4s ease-in-out;
+}
+
+/* Hamburger top and bottom lines creation */
+.menu-wrap .hamburger>div::before,
+.menu-wrap .hamburger>div::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: -10px;
+  width: 100%;
+  height: 2px;
+  background: inherit;
+}
+
+/* Se coloca línea inferior */
+.menu-wrap .hamburger>div::after {
+  top: 10px;
+}
+
+/* Toggler animation */
+
+/* Nota: Rota las 3 líneas del menu, 135° al hacer click
+        es decir al hacer checked en el checkbox */
+/* + selector = Directly after or siblings  */
+.menu-wrap .toggler:checked+.hamburger>div {
+  transform: rotate(135deg);
+}
+
+/* Nota: Giran las líneas del menu, para convertirse en una X */
+.menu-wrap .toggler:checked+.hamburger>div:before,
+.menu-wrap .toggler:checked+.hamburger>div:after {
+  top: 0;
+  transform: rotate(90deg);
+}
+
+/* Rota en hover cuando está :checked */
+.menu-wrap .toggler:checked:hover+.hamburger>div {
+  transform: rotate(225deg);
+}
+
+/* >>>>>>>>>>>>>>>>>>> <<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+/* >>>>>>>>> Show Menu on click <<<<<<<<<<<<<  */
+.menu-wrap .toggler:checked~.menu {
+  visibility: visible;
+}
+
+.menu-wrap .toggler:checked~.menu>div {
+  transform: scale(1);
+  transition-duration: var(--menu-speed);
+}
+
+.menu-wrap .toggler:checked~.menu>div>div {
+  opacity: 1;
+  transition: opacity 0.4s ease 0.4s;
+}
+
+/* Termina format de Hamburger Menu */
+/* ******************************* */
+/* ******************************* */
+
+
+
+
+/* ******************************* */
+/* ******************************* */
+/* Inicia format de Menu ul*/
+.menu-wrap .menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  visibility: hidden;
+
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Se agrega color de fondo en primer >div.
+      Tamaño 200% vw y se vuelve a centrar
+      Inicia en scale(0) y se agrega transition
+*/
+.menu-wrap .menu>div {
+  background: var(--overlay-color);
+  border-radius: 50%;
+  width: 200vw;
+  height: 200vw;
+  display: flex;
+  /* Nota: Se agrega para mostrar el fondo como un círculo */
+  flex: none;
+  align-items: center;
+  justify-content: center;
+
+  transform: scale(0);
+
+  /* Nota: transition para scale */
+  transition: all 0.4s ease;
+}
+
+/* Nota: Segundo div, que contiene el ul no crece más del 90% del viewport 
+          transition muestra el menu ul después de cargar el fondo
+*/
+.menu-wrap .menu>div>div {
+  text-align: center;
+  max-width: 90vw;
+  max-height: 100vh;
+  opacity: 0;
+  transition: opacity 0.4 ease;
+}
+
+.menu-wrap .menu>div>div>ul>li {
+  list-style: none;
+  color: #fff;
+  font-size: 1.6rem;
+  padding: 1.2rem;
+}
+
+.menu-wrap .menu>div>div>ul>li>a {
+  color: inherit;
+  transition: color 0.4s ease;
+}
+
+.menu-wrap .menu>div>div>ul>li>a:hover {
+  color: var(--secondary-color);
+}
